@@ -7,37 +7,12 @@ class Submarine:
         self.zeroesList = collections.defaultdict(list)
         self.lineLength = 0
 
-    # def oxygenRating(self, decimal=True):
-    #     oxygenSet = None
-    #     for i in range(self.lineLength):
-    #         curOnes = self.onesList.get(i, [])
-    #         curZeroes = self.zeroesList.get(i, [])
-    #         if len(curOnes) >= len(curZeroes):
-    #             curSet = curOnes
-    #         else:
-    #             curSet = curZeroes
-    #
-    #         if oxygenSet is None:
-    #             oxygenSet = set(curSet)
-    #         else:
-    #             oxygenSet = oxygenSet.intersection(set(curSet))
-    #
-    #         if len(oxygenSet) == 1:
-    #             break
-    #
-    #     oxygenRating = list(oxygenSet)[0]
-    #     return int(oxygenRating, 2) if decimal else oxygenRating
-
     def oxygenRating(self, decimal=True):
         oxygenList = None
         for i in range(self.lineLength):
             if oxygenList is None:
-                curOnes = self.onesList.get(i, [])
-                curZeroes = self.zeroesList.get(i, [])
-                if len(curOnes) >= len(curZeroes):
-                    oxygenList = curOnes
-                else:
-                    oxygenList = curZeroes
+                onesList = self.onesList.get(i, [])
+                zeroesList = self.zeroesList.get(i, [])
             else:
                 zeroesList = []
                 onesList = []
@@ -47,10 +22,10 @@ class Submarine:
                     else:
                         onesList.append(line)
 
-                if len(onesList) >= len(zeroesList):
-                    oxygenList = onesList
-                else:
-                    oxygenList = zeroesList
+            if len(onesList) >= len(zeroesList):
+                oxygenList = onesList
+            else:
+                oxygenList = zeroesList
 
                 if len(oxygenList) == 1:
                     break
@@ -62,12 +37,8 @@ class Submarine:
         co2ScrubberList = None
         for i in range(self.lineLength):
             if co2ScrubberList is None:
-                curOnes = self.onesList.get(i, [])
-                curZeroes = self.zeroesList.get(i, [])
-                if len(curOnes) < len(curZeroes):
-                    co2ScrubberList = curOnes
-                else:
-                    co2ScrubberList = curZeroes
+                onesList = self.onesList.get(i, [])
+                zeroesList = self.zeroesList.get(i, [])
             else:
                 zeroesList = []
                 onesList = []
@@ -77,38 +48,16 @@ class Submarine:
                     else:
                         onesList.append(line)
 
-                if len(onesList) < len(zeroesList):
-                    co2ScrubberList = onesList
-                else:
-                    co2ScrubberList = zeroesList
+            if len(onesList) < len(zeroesList):
+                co2ScrubberList = onesList
+            else:
+                co2ScrubberList = zeroesList
 
-                if len(co2ScrubberList) == 1:
-                    break
+            if len(co2ScrubberList) == 1:
+                break
 
         co2ScrubberRating = co2ScrubberList[0]
         return int(co2ScrubberRating, 2) if decimal else co2ScrubberRating
-
-    # def co2ScrubberRating(self, decimal=True):
-    #     co2ScrubberSet = None
-    #     for i in range(self.lineLength):
-    #         curOnes = self.onesList.get(i, [])
-    #         curZeroes = self.zeroesList.get(i, [])
-    #         if len(curOnes) < len(curZeroes):
-    #             curSet = curOnes
-    #         else:
-    #             curSet = curZeroes
-    #
-    #         if co2ScrubberSet is None:
-    #             co2ScrubberSet = set(curSet)
-    #         else:
-    #             co2ScrubberSet = co2ScrubberSet.intersection(set(curSet))
-    #
-    #         if len(co2ScrubberSet) == 1:
-    #             break
-    #
-    #     co2ScrubberRating = list(co2ScrubberSet)[0]
-    #     return int(co2ScrubberRating, 2) if decimal else co2ScrubberRating
-
 
     def lifeSupportRating(self):
         return self.oxygenRating() * self.co2ScrubberRating()
@@ -127,7 +76,6 @@ class Submarine:
 
     def __repr__(self):
         return f'oxygenRating: {self.oxygenRating(decimal=False)}, co2ScrubberRating: {self.co2ScrubberRating(decimal=False)}, lifeSupportRating: {self.lifeSupportRating()}'
-
 
 def readFile(filename):
     with open(filename, 'r') as f:
