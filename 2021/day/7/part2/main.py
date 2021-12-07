@@ -1,55 +1,62 @@
 import collections
-import tqdm
 
-class LanternfishSchool:
+class CrabSwarm:
     def __init__(self):
-        self.school = collections.defaultdict(int)
+        self.swarm = []
 
     def processInput(self, input):
         initialState = [int(x) for x in input[0].strip().split(',')]
-        for timer in initialState:
-            self.school[timer] += 1
+        self.swarm = initialState
+        self.minPos = min(initialState)
+        self.maxPos = max(initialState)
+        self.costOfMoves = {}
+        self.createCostOfMoves(self.maxPos - self.minPos)
 
-    def passDays(self, numDays=80):
-        print(f'Initial state: {self}')
-        for i in tqdm.tqdm(range(numDays)):
-            self.passDay()
+    def createCostOfMoves(self, maxDistance):
+        curCost = 0
+        for i in range(maxDistance+1):
+            curCost += i
+            self.costOfMoves[i] = curCost
 
-    def passDay(self):
-        newSchool = collections.defaultdict(int)
-        for timer, count in self.school.items():
-            if timer == 0:
-                newSchool[8] += count
-                newSchool[6] += count
-            else:
-                newSchool[timer - 1] += count
+    def alignPositionCost(self, newPos):
+        """
+        Align crabs to new position
+        :param newPos: the new position to align to
+        :return: the fuel cost to align to the position
+        """
+        return sum([self.costOfMoves[abs(self.swarm[i]-newPos)] for i in range(len(self.swarm))])
 
-        self.school = newSchool
+    def findMinAlignmentCost(self):
+        minCost = 100000000000000000
+        minPos = -1
+        for pos in range(self.minPos, self.maxPos):
+            fuelCost = self.alignPositionCost(pos)
+            if fuelCost < minCost:
+                minCost = fuelCost
+                minPos = pos
 
-    def totalFish(self):
-        total = 0
-        for count in self.school.values():
-            total += count
-        return total
+        return minPos, minCost
 
     def __repr__(self):
-        return f'total: {self.totalFish():,}, {self.school}'
+        return ','.join([repr(crab) for crab in self.swarm])
 
 def readFile(filename):
     with open(filename, 'r') as f:
         return f.readlines()
 
 if __name__ == '__main__':
-    exampleSchool = LanternfishSchool()
-    lines = readFile('C:/Users/bill/Code/projects/adventofcode/2021/day/6/part2/example.txt')
+    exampleSwarm = CrabSwarm()
+    lines = readFile('C:/Users/bill/Code/projects/adventofcode/2021/day/7/part2/example.txt')
     breakpoint()
-    exampleSchool.processInput(lines)
-    exampleSchool.passDays(numDays=256)
-    totalLanterns = exampleSchool.totalFish()
-    assert totalLanterns == 26984457539
+    exampleSwarm.processInput(lines)
+    minPos, minCost = exampleSwarm.findMinAlignmentCost()
+    assert minCost == 168
+    assert minPos == 5
 
-    inputSchool = LanternfishSchool()
-    lines = readFile('C:/Users/bill/Code/projects/adventofcode/2021/day/6/part2/input.txt')
-    inputSchool.processInput(lines)
-    inputSchool.passDays(numDays=256)
-    print(f'totalLanterns: {inputSchool.totalFish()}')
+    inputSwarm = CrabSwarm()
+    lines = readFile('C:/Users/bill/Code/projects/adventofcode/2021/day/7/part2/input.txt')
+    inputSwarm.processInput(lines)
+    minPos, minCost = inputSwarm.findMinAlignmentCost()
+    print(f'minPos: {minPos} minCost: {minCost}')
+
+
